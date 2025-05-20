@@ -1,5 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { IGuardianDto } from "./GuardianDto";
+import AddressEntity from "../address/AddressEntity";
+import { IAddressDto } from "../address/AddressDto";
 
 @Entity()
 export default class GuardianEntity {
@@ -13,8 +21,14 @@ export default class GuardianEntity {
   phone: string;
   @Column({ nullable: true })
   photo?: string;
-  @Column({ nullable: true })
-  address?: string;
+
+  @OneToOne(() => AddressEntity, {
+    nullable: true,
+    cascade: true,
+    eager: true,
+  })
+  @JoinColumn()
+  address?: AddressEntity;
 
   constructor(
     id: number | undefined,
@@ -22,7 +36,7 @@ export default class GuardianEntity {
     password: string,
     phone: string,
     photo?: string,
-    address?: string
+    address?: AddressEntity
   ) {
     this.id = id;
     this.name = name;
@@ -50,7 +64,23 @@ export default class GuardianEntity {
     }
 
     if (dto.address !== undefined) {
-      guardian.address = dto.address;
+      guardian.address = new AddressEntity(
+        dto.address.id,
+        dto.address.city,
+        dto.address.state
+      );
+    }
+  }
+
+  static updateAddress(guardian: GuardianEntity, dto: IAddressDto) {
+    if (guardian.address !== undefined) {
+      if (dto.city !== undefined) {
+        guardian.address.city = dto.city;
+      }
+
+      if (dto.state !== undefined) {
+        guardian.address.state = dto.state;
+      }
     }
   }
 }

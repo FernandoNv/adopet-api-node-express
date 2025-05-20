@@ -2,6 +2,9 @@ import { IRepository } from "../types/IRepository";
 import GuardianEntity from "./entity/GuardianEntity";
 import GuardianDto, { IGuardianDto } from "./entity/GuardianDto";
 import { EntityNotFoundError } from "../errors/EntityNotFoundError";
+import { IAddressDto } from "./address/AddressDto";
+import AddressEntity from "./address/AddressEntity";
+import { AddressNotCompleteError } from "./address/AddressNotCompleteError";
 
 export default class GuardianService {
   constructor(
@@ -48,5 +51,31 @@ export default class GuardianService {
     }
 
     return this.repository.delete(id);
+  }
+
+  async updateAddress(id: number, updateAddress: IAddressDto) {
+    const guardian = await this.repository.getById(id);
+    if (!guardian) {
+      throw new EntityNotFoundError("Guardian not found");
+    }
+
+    if (!guardian.address) {
+      if (!updateAddress.city || !updateAddress.state) {
+        throw new AddressNotCompleteError(
+          "City and state are required when address is not set"
+        );
+      }
+      guardian.address = new AddressEntity(
+        undefined,
+        updateAddress.city,
+        updateAddress.state
+      );
+    } else {
+      GuardianEntity.updateAddress(guardian, updateAddress);
+    }
+
+    const savedGuardian = await this.repository.update(id, guardian);
+
+    return new Promise((resolve) => resolve(this.dto.mapToDto(savedGuardian)));
   }
 }

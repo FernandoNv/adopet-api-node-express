@@ -1,4 +1,5 @@
 import GuardianEntity from "./GuardianEntity";
+import AddressDto, { IAddressDto } from "../address/AddressDto";
 
 export interface IGuardianDto {
   id: number | undefined;
@@ -6,10 +7,11 @@ export interface IGuardianDto {
   password: string;
   phone: string;
   photo?: string;
-  address?: string;
+  address?: IAddressDto;
 }
 
 export default class GuardianDto {
+  constructor(private readonly addressDto: AddressDto) {}
   mapToGuardian(dto: IGuardianDto): GuardianEntity {
     return new GuardianEntity(
       dto.id,
@@ -17,7 +19,7 @@ export default class GuardianDto {
       dto.password,
       dto.phone,
       dto.photo,
-      dto.address
+      this.addressDto.mapToAddress(dto.address)
     );
   }
 

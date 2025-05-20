@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import GuardianService from "./GuardianService";
 import { IGuardianDto } from "./entity/GuardianDto";
 import { EntityNotFoundError } from "../errors/EntityNotFoundError";
+import { IAddressDto } from "./address/AddressDto";
 
 export class GuardianController {
   constructor(private readonly guardianService: GuardianService) {}
@@ -63,6 +64,31 @@ export class GuardianController {
       if (e instanceof Error) {
         response.status(400).json({ message: e.message });
         console.error({ name: e.name, message: e.message });
+        return;
+      }
+
+      console.error({ name: "Unknown error", message: "Unknown error" });
+      response.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async updateAddress(request: Request, response: Response): Promise<void> {
+    const updateAddress = <IAddressDto>request.body;
+    const id = Number.parseInt(request.params.id);
+    try {
+      const address = await this.guardianService.updateAddress(
+        id,
+        updateAddress
+      );
+      response.status(200).json(address);
+    } catch (e: unknown) {
+      if (e instanceof EntityNotFoundError) {
+        response.status(404).json({ message: e.message });
+        return;
+      }
+
+      if (e instanceof Error) {
+        response.status(400).json({ message: e.message });
         return;
       }
 

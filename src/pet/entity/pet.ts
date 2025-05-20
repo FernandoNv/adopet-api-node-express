@@ -12,4 +12,5 @@ export interface IPetDto {
   breed?: PetBreedEnum;
   birthDate?: Date;
   adopted?: boolean;
+  guardianId?: number;
 }

@@ -1,5 +1,6 @@
 import { IPetDto, PetBreedEnum } from "./pet";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import GuardianEntity from "../../guardian/entity/GuardianEntity";
 
 @Entity()
 export default class PetEntity {
@@ -13,6 +14,11 @@ export default class PetEntity {
   birthDate: Date;
   @Column()
   adopted: boolean;
+
+  @ManyToOne(() => GuardianEntity, (guardian) => guardian.pets, {
+    nullable: true,
+  })
+  guardian!: GuardianEntity;
 
   constructor(
     id: number | undefined,

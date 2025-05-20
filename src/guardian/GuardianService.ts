@@ -12,6 +12,10 @@ export default class GuardianService {
     private readonly dto: GuardianDto
   ) {}
 
+  async getById(id: number): Promise<GuardianEntity | null> {
+    return this.repository.getById(id);
+  }
+
   async create(dto: IGuardianDto): Promise<IGuardianDto> {
     const guardian = this.dto.mapToGuardian(dto);
 
@@ -40,7 +44,7 @@ export default class GuardianService {
     GuardianEntity.update(guardian, dto);
     const savedGuardian = await this.repository.update(id, guardian);
 
-    return new Promise((resolve) => resolve(this.dto.mapToDto(savedGuardian)));
+    return this.dto.mapToDto(savedGuardian);
   }
 
   async delete(id: number): Promise<void> {
@@ -76,6 +80,6 @@ export default class GuardianService {
 
     const savedGuardian = await this.repository.update(id, guardian);
 
-    return new Promise((resolve) => resolve(this.dto.mapToDto(savedGuardian)));
+    return this.dto.mapToDto(savedGuardian);
   }
 }

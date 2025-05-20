@@ -71,6 +71,52 @@ class PetController {
       response.status(500).json({ message: "Internal server error" });
     }
   }
+
+  async adopt(req: Request, response: Response): Promise<void> {
+    const id = Number.parseInt(req.params.id);
+    const idGuardian = Number.parseInt(req.params.idGuardian);
+
+    try {
+      const pet = await this.petService.adopt(id, idGuardian);
+      response.status(200).json(pet);
+    } catch (e: unknown) {
+      if (e instanceof EntityNotFoundError) {
+        response.status(404).json({ message: e.message });
+        return;
+      }
+
+      if (e instanceof Error) {
+        response.status(400).json({ message: e.message });
+        console.error({ name: e.name, message: e.message });
+        return;
+      }
+
+      console.error({ name: "Unknown error", message: "Unknown error" });
+      response.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async detail(req: Request, response: Response): Promise<void> {
+    const id = Number.parseInt(req.params.id);
+    try {
+      const pet = await this.petService.getById(id);
+      response.status(200).json(pet);
+    } catch (e: unknown) {
+      if (e instanceof EntityNotFoundError) {
+        response.status(404).json({ message: e.message });
+        return;
+      }
+
+      if (e instanceof Error) {
+        response.status(400).json({ message: e.message });
+        console.error({ name: e.name, message: e.message });
+        return;
+      }
+
+      console.error({ name: "Unknown error", message: "Unknown error" });
+      response.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
 
 export default PetController;

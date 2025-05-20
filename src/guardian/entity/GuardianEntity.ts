@@ -2,12 +2,14 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { IGuardianDto } from "./GuardianDto";
 import AddressEntity from "../address/AddressEntity";
 import { IAddressDto } from "../address/AddressDto";
+import PetEntity from "../../pet/entity/PetEntity";
 
 @Entity()
 export default class GuardianEntity {
@@ -21,6 +23,13 @@ export default class GuardianEntity {
   phone: string;
   @Column({ nullable: true })
   photo?: string;
+
+  @OneToMany(() => PetEntity, (pet) => pet.guardian, {
+    nullable: false,
+    cascade: true,
+    eager: true,
+  })
+  pets!: PetEntity[];
 
   @OneToOne(() => AddressEntity, {
     nullable: true,

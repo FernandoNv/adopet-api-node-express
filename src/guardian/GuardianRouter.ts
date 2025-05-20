@@ -13,7 +13,10 @@ const guardianRepository: IRepository<GuardianEntity> = new GuardianRepository(
 );
 const addressDto = new AddressDto();
 const guardianDto = new GuardianDto(addressDto);
-const guardianService = new GuardianService(guardianRepository, guardianDto);
+export const guardianService = new GuardianService(
+  guardianRepository,
+  guardianDto
+);
 const guardianController = new GuardianController(guardianService);
 
 const guardianRouter = express.Router();

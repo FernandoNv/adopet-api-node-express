@@ -19,6 +19,7 @@ export default class PetDTO {
       breed: pet.breed,
       birthDate: pet.birthDate,
       adopted: pet.adopted,
+      guardianId: pet.guardian ? pet.guardian.id : null,
     } as IPetDto;
   }
 }

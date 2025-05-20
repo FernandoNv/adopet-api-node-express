@@ -7,11 +7,14 @@ export default class PetRepository implements IRepository<PetEntity> {
   constructor(private readonly _repository: Repository<PetEntity>) {}
 
   getAll(): Promise<PetEntity[]> {
-    return this._repository.find({ take: 100 });
+    return this._repository.find({ take: 100, relations: ["guardian"] });
   }
 
   async getById(id: number): Promise<PetEntity | null> {
-    return this._repository.findOne({ where: { id } });
+    return this._repository.findOne({
+      where: { id },
+      relations: ["guardian"],
+    });
   }
 
   async delete(id: number): Promise<void> {
